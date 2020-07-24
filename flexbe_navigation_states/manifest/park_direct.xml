@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="park_direct">
+
+	<executable package_path="flexbe_navigation_states.park_direct_sm" class="park_directSM" />
+	<tagstring>park_direct</tagstring>
+	<author>TG4</author>
+	<date>Sat Jul 18 2020</date>
+	<description>
+		park_direct
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="go_straight">
+
+	<executable package_path="flexbe_navigation_states.go_straight_sm" class="go_straightSM" />
+	<tagstring>go straight</tagstring>
+	<author>TG4</author>
+	<date>Sat Jul 18 2020</date>
+	<description>
+		go_straight
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

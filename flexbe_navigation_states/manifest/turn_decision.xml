@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="turn_decision">
+
+	<executable package_path="flexbe_navigation_states.turn_decision_sm" class="turn_decisionSM" />
+	<tagstring>turn decision</tagstring>
+	<author>TG4</author>
+	<date>Sat Jul 18 2020</date>
+	<description>
+		turn_decisione
+	</description>
+
+
+	<!-- Contained Behaviors -->
+	<contains name="turn_right" />
+	<contains name="turn_left" />
+
+	<!-- Available Parameters -->
+
+</behavior>
