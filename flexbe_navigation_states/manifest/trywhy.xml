@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="TRYWHY">
+
+	<executable package_path="flexbe_navigation_states.trywhy_sm" class="TRYWHYSM" />
+	<tagstring>TRYWHY</tagstring>
+	<author>TG4</author>
+	<date>Tue Jul 28 2020</date>
+	<description>
+		TRYWHY
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

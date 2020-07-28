@@ -9,8 +9,7 @@
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from flexbe_states.wait_state import WaitState
-from flexbe_states.subscriber_state import SubscriberState
-from flexbe_navigation_states.move_base_state import MoveBaseState
+from flexbe_navigation_states.go_to_battery_charging_station_sm import go_to_battery_charging_stationSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -18,22 +17,23 @@ from flexbe_navigation_states.move_base_state import MoveBaseState
 
 
 '''
-Created on Sat Jul 18 2020
+Created on Sat Jul 25 2020
 @author: TG4
 '''
-class go_straightSM(Behavior):
+class go_to_battery_charging_stationSM(Behavior):
 	'''
-	go_straight
+	go to battery charging station
 	'''
 
 
 	def __init__(self):
-		super(go_straightSM, self).__init__()
-		self.name = 'go_straight'
+		super(go_to_battery_charging_stationSM, self).__init__()
+		self.name = 'go_to_battery_charging_station'
 
 		# parameters of this behavior
 
 		# references to used behaviors
+		self.add_behavior(go_to_battery_charging_stationSM, 'go_to_battery_charging_station')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -45,9 +45,10 @@ class go_straightSM(Behavior):
 
 
 	def create(self):
-		# x:133 y:340, x:333 y:340
+		# x:30 y:365, x:458 y:366
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
-		_state_machine.userdata.waypoint_straight = {'coordinate':{'x':'none', 'y':'none', 'theta':'none'}, 'increment':{'x':1.0, 'y':0.0, 'theta':0.0}}
+		_state_machine.userdata.waypoint1 = [0.7081,-2.5405, 0.0]
+		_state_machine.userdata.incremental1 = [0.0, 0.0, 0.0]
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -56,25 +57,17 @@ class go_straightSM(Behavior):
 
 
 		with _state_machine:
-			# x:107 y:124
+			# x:164 y:156
 			OperatableStateMachine.add('w1',
-										WaitState(wait_time=1),
-										transitions={'done': 's1'},
+										WaitState(wait_time=3),
+										transitions={'done': 'go_to_battery_charging_station'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:301 y:174
-			OperatableStateMachine.add('s1',
-										SubscriberState(topic='/pose', blocking=True, clear=False),
-										transitions={'received': 'm1', 'unavailable': 'failed'},
-										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'curr_pose'})
-
-			# x:81 y:209
-			OperatableStateMachine.add('m1',
-										MoveBaseState(),
-										transitions={'arrived': 'finished', 'failed': 'failed'},
-										autonomy={'arrived': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'waypoint': 'waypoint_straight', 'curr_pose': 'curr_pose'})
+			# x:398 y:156
+			OperatableStateMachine.add('go_to_battery_charging_station',
+										self.use_behavior(go_to_battery_charging_stationSM, 'go_to_battery_charging_station'),
+										transitions={'finished': 'finished', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 
 		return _state_machine

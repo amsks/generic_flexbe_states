@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="go_to_battery_charging_station">
+
+	<executable package_path="flexbe_navigation_states.go_to_battery_charging_station_sm" class="go_to_battery_charging_stationSM" />
+	<tagstring>go battery charging station</tagstring>
+	<author>TG4</author>
+	<date>Sat Jul 25 2020</date>
+	<description>
+		go to battery charging station
+	</description>
+
+
+	<!-- Contained Behaviors -->
+	<contains name="go_to_battery_charging_station" />
+
+	<!-- Available Parameters -->
+
+</behavior>

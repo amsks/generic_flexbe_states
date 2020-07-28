@@ -9,8 +9,9 @@
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from flexbe_states.wait_state import WaitState
+from flexbe_navigation_states.go_to_destination_sm import go_to_destinationSM
 from flexbe_states.subscriber_state import SubscriberState
-from flexbe_states.decision_state import DecisionState
+from flexbe_navigation_states.battery_check_sm import battery_checkSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -18,22 +19,24 @@ from flexbe_states.decision_state import DecisionState
 
 
 '''
-Created on Sat Jul 18 2020
+Created on Sun Jul 26 2020
 @author: TG4
 '''
-class batterySM(Behavior):
+class mainSM(Behavior):
 	'''
-	battery
+	main
 	'''
 
 
 	def __init__(self):
-		super(batterySM, self).__init__()
-		self.name = 'battery'
+		super(mainSM, self).__init__()
+		self.name = 'main'
 
 		# parameters of this behavior
 
 		# references to used behaviors
+		self.add_behavior(go_to_destinationSM, 'go_to_destination')
+		self.add_behavior(battery_checkSM, 'battery_check')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -45,10 +48,10 @@ class batterySM(Behavior):
 
 
 	def create(self):
-		# x:133 y:340, x:583 y:40
-		_state_machine = OperatableStateMachine(outcomes=['LOW_B', 'failed'])
-		_state_machine.userdata.waypoint1 = "ZER0"
-		_state_machine.userdata.incremental1 = [0, 0, 0]
+		# x:133 y:540, x:133 y:440
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
+		_state_machine.userdata.input_value1 = 5
+		_state_machine.userdata.reason1 = 5
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -57,31 +60,31 @@ class batterySM(Behavior):
 
 
 		with _state_machine:
-			# x:107 y:24
+			# x:107 y:74
 			OperatableStateMachine.add('w1',
 										WaitState(wait_time=3),
 										transitions={'done': 's1'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:301 y:24
+			# x:519 y:521
+			OperatableStateMachine.add('go_to_destination',
+										self.use_behavior(go_to_destinationSM, 'go_to_destination'),
+										transitions={'finished': 'finished', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit},
+										remapping={'reason': 'main_goal'})
+
+			# x:351 y:74
 			OperatableStateMachine.add('s1',
-										SubscriberState(topic='/FourWD/battery', blocking=True, clear=False),
-										transitions={'received': 'w2', 'unavailable': 'failed'},
+										SubscriberState(topic='/set_waypoint', blocking=True, clear=False),
+										transitions={'received': 'battery_check', 'unavailable': 'failed'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'message1'})
+										remapping={'message': 'main_goal'})
 
-			# x:307 y:174
-			OperatableStateMachine.add('w2',
-										WaitState(wait_time=1),
-										transitions={'done': 'd1'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:105 y:174
-			OperatableStateMachine.add('d1',
-										DecisionState(outcomes=['Low','Medium','High'], conditions=lambda x: 'Low' if x.data<49 else 'Medium'),
-										transitions={'Low': 'LOW_B', 'Medium': 'w1', 'High': 'w1'},
-										autonomy={'Low': Autonomy.Off, 'Medium': Autonomy.Off, 'High': Autonomy.Off},
-										remapping={'input_value': 'message1'})
+			# x:669 y:49
+			OperatableStateMachine.add('battery_check',
+										self.use_behavior(battery_checkSM, 'battery_check'),
+										transitions={'L_B': 'go_to_destination', 'M_B': 'go_to_destination', 'H_B': 'go_to_destination', 'failed': 'failed'},
+										autonomy={'L_B': Autonomy.Inherit, 'M_B': Autonomy.Inherit, 'H_B': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 
 		return _state_machine

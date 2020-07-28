@@ -21,15 +21,15 @@ from flexbe_states.decision_state import DecisionState
 Created on Sat Jul 18 2020
 @author: TG4
 '''
-class batterySM(Behavior):
+class battery_checkSM(Behavior):
 	'''
-	battery
+	battery check
 	'''
 
 
 	def __init__(self):
-		super(batterySM, self).__init__()
-		self.name = 'battery'
+		super(battery_checkSM, self).__init__()
+		self.name = 'battery_check'
 
 		# parameters of this behavior
 
@@ -45,10 +45,8 @@ class batterySM(Behavior):
 
 
 	def create(self):
-		# x:133 y:340, x:583 y:40
-		_state_machine = OperatableStateMachine(outcomes=['LOW_B', 'failed'])
-		_state_machine.userdata.waypoint1 = "ZER0"
-		_state_machine.userdata.incremental1 = [0, 0, 0]
+		# x:33 y:340, x:133 y:340, x:233 y:340, x:144 y:140
+		_state_machine = OperatableStateMachine(outcomes=['L_B', 'M_B', 'H_B', 'failed'])
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -59,29 +57,29 @@ class batterySM(Behavior):
 		with _state_machine:
 			# x:107 y:24
 			OperatableStateMachine.add('w1',
-										WaitState(wait_time=3),
+										WaitState(wait_time=4),
 										transitions={'done': 's1'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:301 y:24
+			# x:351 y:24
 			OperatableStateMachine.add('s1',
 										SubscriberState(topic='/FourWD/battery', blocking=True, clear=False),
 										transitions={'received': 'w2', 'unavailable': 'failed'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'message1'})
+										remapping={'message': 'battery_level'})
 
-			# x:307 y:174
+			# x:357 y:224
 			OperatableStateMachine.add('w2',
 										WaitState(wait_time=1),
 										transitions={'done': 'd1'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:105 y:174
+			# x:105 y:224
 			OperatableStateMachine.add('d1',
-										DecisionState(outcomes=['Low','Medium','High'], conditions=lambda x: 'Low' if x.data<49 else 'Medium'),
-										transitions={'Low': 'LOW_B', 'Medium': 'w1', 'High': 'w1'},
+										DecisionState(outcomes=['Low','Medium','High'], conditions=lambda x: 'Low' if x.data<96 else 'Medium'),
+										transitions={'Low': 'L_B', 'Medium': 'M_B', 'High': 'H_B'},
 										autonomy={'Low': Autonomy.Off, 'Medium': Autonomy.Off, 'High': Autonomy.Off},
-										remapping={'input_value': 'message1'})
+										remapping={'input_value': 'battery_level'})
 
 
 		return _state_machine

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="object_recognition">
+
+	<executable package_path="flexbe_navigation_states.object_recognition_sm" class="object_recognitionSM" />
+	<tagstring>object recognition</tagstring>
+	<author>TG4</author>
+	<date>Tue Jul 28 2020</date>
+	<description>
+		object recognition
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

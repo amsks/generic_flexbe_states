@@ -10,7 +10,7 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from flexbe_states.wait_state import WaitState
 from flexbe_states.subscriber_state import SubscriberState
-from flexbe_states.decision_state import DecisionState
+from flexbe_utility_states.MARCO import Carbonara
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -18,18 +18,18 @@ from flexbe_states.decision_state import DecisionState
 
 
 '''
-Created on Sat Jul 18 2020
+Created on Tue Jul 28 2020
 @author: TG4
 '''
-class batterySM(Behavior):
+class object_recognitionSM(Behavior):
 	'''
-	battery
+	object recognition
 	'''
 
 
 	def __init__(self):
-		super(batterySM, self).__init__()
-		self.name = 'battery'
+		super(object_recognitionSM, self).__init__()
+		self.name = 'object_recognition'
 
 		# parameters of this behavior
 
@@ -45,10 +45,8 @@ class batterySM(Behavior):
 
 
 	def create(self):
-		# x:133 y:340, x:583 y:40
-		_state_machine = OperatableStateMachine(outcomes=['LOW_B', 'failed'])
-		_state_machine.userdata.waypoint1 = "ZER0"
-		_state_machine.userdata.incremental1 = [0, 0, 0]
+		# x:733 y:490, x:733 y:140
+		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -57,31 +55,25 @@ class batterySM(Behavior):
 
 
 		with _state_machine:
-			# x:107 y:24
+			# x:107 y:124
 			OperatableStateMachine.add('w1',
 										WaitState(wait_time=3),
 										transitions={'done': 's1'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:301 y:24
+			# x:501 y:224
 			OperatableStateMachine.add('s1',
-										SubscriberState(topic='/FourWD/battery', blocking=True, clear=False),
-										transitions={'received': 'w2', 'unavailable': 'failed'},
+										SubscriberState(topic='/darknet_ros/bounding_boxes', blocking=True, clear=True),
+										transitions={'received': 'c1', 'unavailable': 'failed'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'message1'})
+										remapping={'message': 'detection'})
 
-			# x:307 y:174
-			OperatableStateMachine.add('w2',
-										WaitState(wait_time=1),
-										transitions={'done': 'd1'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:105 y:174
-			OperatableStateMachine.add('d1',
-										DecisionState(outcomes=['Low','Medium','High'], conditions=lambda x: 'Low' if x.data<49 else 'Medium'),
-										transitions={'Low': 'LOW_B', 'Medium': 'w1', 'High': 'w1'},
-										autonomy={'Low': Autonomy.Off, 'Medium': Autonomy.Off, 'High': Autonomy.Off},
-										remapping={'input_value': 'message1'})
+			# x:343 y:474
+			OperatableStateMachine.add('c1',
+										Carbonara(),
+										transitions={'done': 'w1'},
+										autonomy={'done': Autonomy.Off},
+										remapping={'input_value': 'detection'})
 
 
 		return _state_machine

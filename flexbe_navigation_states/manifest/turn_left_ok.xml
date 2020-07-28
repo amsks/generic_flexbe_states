@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="turn_left_ok">
+
+	<executable package_path="flexbe_navigation_states.turn_left_ok_sm" class="turn_left_okSM" />
+	<tagstring>turn left</tagstring>
+	<author>TG4</author>
+	<date>Tue Jul 28 2020</date>
+	<description>
+		turn left
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

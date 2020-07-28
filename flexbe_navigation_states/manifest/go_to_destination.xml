@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="go_to_destination">
+
+	<executable package_path="flexbe_navigation_states.go_to_destination_sm" class="go_to_destinationSM" />
+	<tagstring>go destination</tagstring>
+	<author>TG4</author>
+	<date>Sun Jul 26 2020</date>
+	<description>
+		go to destination
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

@@ -47,7 +47,7 @@ class turn_leftSM(Behavior):
 	def create(self):
 		# x:583 y:140, x:133 y:290
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
-		_state_machine.userdata.incremental1 = [2, 2, 3.1415/2]
+		_state_machine.userdata.waypoint_left = {'coordinate':{'x':'none', 'y':'none', 'theta':'none'}, 'increment':{'x':2.0, 'y':2.0, 'theta':3.1415/2}}
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -67,14 +67,20 @@ class turn_leftSM(Behavior):
 										SubscriberState(topic='/pose', blocking=True, clear=False),
 										transitions={'received': 'm1', 'unavailable': 'failed'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'message'})
+										remapping={'message': 'curr_pose'})
 
-			# x:331 y:274
+			# x:357 y:417
+			OperatableStateMachine.add('w2',
+										WaitState(wait_time=5),
+										transitions={'done': 'finished'},
+										autonomy={'done': Autonomy.Off})
+
+			# x:331 y:259
 			OperatableStateMachine.add('m1',
 										MoveBaseState(),
-										transitions={'arrived': 'finished', 'failed': 'failed'},
+										transitions={'arrived': 'w2', 'failed': 'failed'},
 										autonomy={'arrived': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'waypoint': 'message', 'incremental': 'incremental1'})
+										remapping={'waypoint': 'waypoint_left', 'curr_pose': 'curr_pose'})
 
 
 		return _state_machine

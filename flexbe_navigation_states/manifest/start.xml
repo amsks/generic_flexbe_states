@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="start">
+
+	<executable package_path="flexbe_navigation_states.start_sm" class="startSM" />
+	<tagstring>start</tagstring>
+	<author>TG4</author>
+	<date>Sat Jul 25 2020</date>
+	<description>
+		start
+	</description>
+
+
+	<!-- Contained Behaviors -->
+	<contains name="battery_check" />
+	<contains name="go_to_battery_charging_station" />
+
+	<!-- Available Parameters -->
+
+</behavior>

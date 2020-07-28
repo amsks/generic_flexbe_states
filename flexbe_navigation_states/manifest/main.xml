@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="main">
+
+	<executable package_path="flexbe_navigation_states.main_sm" class="mainSM" />
+	<tagstring>main</tagstring>
+	<author>TG4</author>
+	<date>Sun Jul 26 2020</date>
+	<description>
+		main
+	</description>
+
+
+	<!-- Contained Behaviors -->
+	<contains name="go_to_destination" />
+	<contains name="battery_check" />
+
+	<!-- Available Parameters -->
+
+</behavior>
