@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="go_back">
+
+	<executable package_path="flexbe_navigation_states.go_back_sm" class="go_backSM" />
+	<tagstring>go back</tagstring>
+	<author>TG4</author>
+	<date>Wed Jul 29 2020</date>
+	<description>
+		go back
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

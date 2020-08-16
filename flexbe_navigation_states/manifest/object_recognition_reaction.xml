@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="object_recognition_reaction">
+
+	<executable package_path="flexbe_navigation_states.object_recognition_reaction_sm" class="object_recognition_reactionSM" />
+	<tagstring>object recognition reaction</tagstring>
+	<author>TG4</author>
+	<date>Wed Jul 29 2020</date>
+	<description>
+		object recognition reaction
+	</description>
+
+
+	<!-- Contained Behaviors -->
+	<contains name="go_straight" />
+	<contains name="Stop" />
+
+	<!-- Available Parameters -->
+
+</behavior>

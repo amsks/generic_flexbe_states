@@ -45,11 +45,12 @@ class park_directSM(Behavior):
 
 
 	def create(self):
-		# x:603 y:586, x:740 y:211
+		# x:683 y:490, x:740 y:211
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
-		_state_machine.userdata.incremental1 = [2, 0, 0]
-		_state_machine.userdata.incremental2 = [0, 2, -3.1415/2]
-		_state_machine.userdata.incremental3 = [0, -1, -3.1415/2]
+		_state_machine.userdata.incremental1 = {'coordinate':{'x':'none', 'y':'none', 'theta':'none'}, 'increment':{'x':1.0, 'y':0.0, 'theta':0.0}}
+		_state_machine.userdata.incremental2 = {'coordinate':{'x':'none', 'y':'none', 'theta':'none'}, 'increment':{'x':0.2929, 'y':0.2929, 'theta':-3.1415/4}}
+		_state_machine.userdata.incremental3 = {'coordinate':{'x':'none', 'y':'none', 'theta':'none'}, 'increment':{'x':0.0, 'y':1.0, 'theta':-3.1415/2}}
+		_state_machine.userdata.incremental4 = {'coordinate':{'x':'none', 'y':'none', 'theta':'none'}, 'increment':{'x':0.0, 'y':-1.0, 'theta':-3.1415/2}}
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -69,46 +70,59 @@ class park_directSM(Behavior):
 										SubscriberState(topic='/pose', blocking=True, clear=False),
 										transitions={'received': 'w2', 'unavailable': 'failed'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'message'})
+										remapping={'message': 'curr_pose'})
 
-			# x:281 y:159
+			# x:281 y:174
 			OperatableStateMachine.add('m1',
 										MoveBaseState(),
 										transitions={'arrived': 'w3', 'failed': 'failed'},
 										autonomy={'arrived': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'waypoint': 'message', 'incremental': 'incremental1'})
+										remapping={'waypoint': 'incremental1', 'curr_pose': 'curr_pose'})
 
-			# x:281 y:259
+			# x:281 y:274
 			OperatableStateMachine.add('m2',
 										MoveBaseState(),
 										transitions={'arrived': 'w4', 'failed': 'failed'},
 										autonomy={'arrived': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'waypoint': 'message', 'incremental': 'incremental2'})
+										remapping={'waypoint': 'incremental2', 'curr_pose': 'curr_pose'})
 
-			# x:281 y:359
+			# x:281 y:374
 			OperatableStateMachine.add('m3',
 										MoveBaseState(),
-										transitions={'arrived': 'finished', 'failed': 'failed'},
+										transitions={'arrived': 'w5', 'failed': 'failed'},
 										autonomy={'arrived': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'waypoint': 'message', 'incremental': 'incremental3'})
+										remapping={'waypoint': 'incremental3', 'curr_pose': 'curr_pose'})
 
-			# x:107 y:167
+			# x:107 y:174
 			OperatableStateMachine.add('w2',
 										WaitState(wait_time=1),
 										transitions={'done': 'm1'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:107 y:267
+			# x:107 y:274
 			OperatableStateMachine.add('w3',
-										WaitState(wait_time=1),
+										WaitState(wait_time=5),
 										transitions={'done': 'm2'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:107 y:367
+			# x:107 y:374
 			OperatableStateMachine.add('w4',
-										WaitState(wait_time=1),
+										WaitState(wait_time=5),
 										transitions={'done': 'm3'},
 										autonomy={'done': Autonomy.Off})
+
+			# x:107 y:474
+			OperatableStateMachine.add('w5',
+										WaitState(wait_time=5),
+										transitions={'done': 'm4'},
+										autonomy={'done': Autonomy.Off})
+
+			# x:281 y:474
+			OperatableStateMachine.add('m4',
+										MoveBaseState(),
+										transitions={'arrived': 'finished', 'failed': 'failed'},
+										autonomy={'arrived': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'waypoint': 'incremental4', 'curr_pose': 'curr_pose'})
 
 
 		return _state_machine

@@ -10,7 +10,9 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from flexbe_states.wait_state import WaitState
 from flexbe_states.subscriber_state import SubscriberState
-from flexbe_navigation_states.move_base_state import MoveBaseState
+from flexbe_utility_states.MARCO import Carbonara
+from flexbe_navigation_states.go_straight_sm import go_straightSM
+from flexbe_navigation_states.stop_sm import StopSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -18,22 +20,24 @@ from flexbe_navigation_states.move_base_state import MoveBaseState
 
 
 '''
-Created on Sat Jul 18 2020
+Created on Wed Jul 29 2020
 @author: TG4
 '''
-class turn_rightSM(Behavior):
+class object_recognition_reactionSM(Behavior):
 	'''
-	turn_right
+	object recognition reaction
 	'''
 
 
 	def __init__(self):
-		super(turn_rightSM, self).__init__()
-		self.name = 'turn_right'
+		super(object_recognition_reactionSM, self).__init__()
+		self.name = 'object_recognition_reaction'
 
 		# parameters of this behavior
 
 		# references to used behaviors
+		self.add_behavior(go_straightSM, 'go_straight')
+		self.add_behavior(StopSM, 'Stop')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -45,11 +49,8 @@ class turn_rightSM(Behavior):
 
 
 	def create(self):
-		# x:683 y:190, x:133 y:290
+		# x:467 y:617, x:633 y:340
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
-		_state_machine.userdata.Direction = 'Right'
-		_state_machine.userdata.Turn_Metric = {'x':1.5,'y':1.5}
-		_state_machine.userdata.Straight_Metric = 2.0
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -58,31 +59,37 @@ class turn_rightSM(Behavior):
 
 
 		with _state_machine:
-			# x:107 y:117
+			# x:357 y:174
 			OperatableStateMachine.add('w1',
 										WaitState(wait_time=1),
 										transitions={'done': 's1'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:351 y:109
+			# x:51 y:324
 			OperatableStateMachine.add('s1',
-										SubscriberState(topic='/pose', blocking=True, clear=False),
-										transitions={'received': 'm1', 'unavailable': 'failed'},
+										SubscriberState(topic='/darknet_ros/bounding_boxes', blocking=True, clear=False),
+										transitions={'received': 'carb1', 'unavailable': 'failed'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'curr_pose'})
+										remapping={'message': 'detected'})
 
-			# x:337 y:412
-			OperatableStateMachine.add('w2',
-										WaitState(wait_time=15),
-										transitions={'done': 'finished'},
-										autonomy={'done': Autonomy.Off})
+			# x:43 y:474
+			OperatableStateMachine.add('carb1',
+										Carbonara(),
+										transitions={'continue': 'go_straight', 'Obstacle': 'Stop'},
+										autonomy={'continue': Autonomy.Off, 'Obstacle': Autonomy.Off},
+										remapping={'input_value': 'detected', 'output_value': 'output_value'})
 
-			# x:331 y:274
-			OperatableStateMachine.add('m1',
-										MoveBaseState(),
-										transitions={'arrived': 'w2', 'failed': 'failed'},
-										autonomy={'arrived': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'Direction': 'Direction', 'curr_pose': 'curr_pose', 'Turn_Metric': 'Turn_Metric', 'Straight_Metric': 'Straight_Metric'})
+			# x:569 y:171
+			OperatableStateMachine.add('go_straight',
+										self.use_behavior(go_straightSM, 'go_straight'),
+										transitions={'finished': 'w1', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
+
+			# x:569 y:471
+			OperatableStateMachine.add('Stop',
+										self.use_behavior(StopSM, 'Stop'),
+										transitions={'finished': 'w1', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 
 		return _state_machine

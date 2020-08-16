@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="Stop">
+
+	<executable package_path="flexbe_navigation_states.stop_sm" class="StopSM" />
+	<tagstring>stop</tagstring>
+	<author>TG4</author>
+	<date>Wed Jul 29 2020</date>
+	<description>
+		stop
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

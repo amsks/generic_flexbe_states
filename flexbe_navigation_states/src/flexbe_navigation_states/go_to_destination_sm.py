@@ -9,8 +9,8 @@
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from flexbe_states.wait_state import WaitState
-from flexbe_navigation_states.move_base_state import MoveBaseState
 from flexbe_states.subscriber_state import SubscriberState
+from flexbe_navigation_states.move_base_state import MoveBaseState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -45,10 +45,10 @@ class go_to_destinationSM(Behavior):
 
 
 	def create(self):
-		# x:383 y:390, x:159 y:190
+		# x:383 y:390, x:182 y:190
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'], input_keys=['reason'])
 		_state_machine.userdata.waypoint1 = {'coordinate':{'x':-7.0, 'y':-7.476, 'theta':0.0}, 'increment':{'x':'none', 'y':'none', 'theta':'none'}}
-		_state_machine.userdata.reason = 5
+		_state_machine.userdata.reason = 0
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -63,13 +63,6 @@ class go_to_destinationSM(Behavior):
 										transitions={'done': 's1'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:81 y:374
-			OperatableStateMachine.add('m1',
-										MoveBaseState(),
-										transitions={'arrived': 'finished', 'failed': 'failed', 'moving': 'finished'},
-										autonomy={'arrived': Autonomy.Off, 'failed': Autonomy.Off, 'moving': Autonomy.Off},
-										remapping={'waypoint': 'waypoint1', 'curr_pose': 'curr_pose'})
-
 			# x:351 y:74
 			OperatableStateMachine.add('s1',
 										SubscriberState(topic='/pose', blocking=True, clear=False),
@@ -80,9 +73,16 @@ class go_to_destinationSM(Behavior):
 			# x:351 y:224
 			OperatableStateMachine.add('s2',
 										SubscriberState(topic='/set_waypoint', blocking=True, clear=False),
-										transitions={'received': 'm1', 'unavailable': 'm1'},
+										transitions={'received': 'm1', 'unavailable': 'failed'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
 										remapping={'message': 'waypoint2'})
+
+			# x:81 y:309
+			OperatableStateMachine.add('m1',
+										MoveBaseState(),
+										transitions={'arrived': 'finished', 'failed': 'failed'},
+										autonomy={'arrived': Autonomy.Off, 'failed': Autonomy.Off},
+										remapping={'waypoint': 'waypoint1', 'curr_pose': 'curr_pose'})
 
 
 		return _state_machine

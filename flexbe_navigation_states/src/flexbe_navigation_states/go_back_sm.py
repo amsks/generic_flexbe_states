@@ -8,7 +8,6 @@
 ###########################################################
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
-from flexbe_states.wait_state import WaitState
 from flexbe_states.subscriber_state import SubscriberState
 from flexbe_navigation_states.move_base_state import MoveBaseState
 # Additional imports can be added inside the following tags
@@ -18,18 +17,18 @@ from flexbe_navigation_states.move_base_state import MoveBaseState
 
 
 '''
-Created on Sat Jul 18 2020
+Created on Wed Jul 29 2020
 @author: TG4
 '''
-class turn_rightSM(Behavior):
+class go_backSM(Behavior):
 	'''
-	turn_right
+	go back
 	'''
 
 
 	def __init__(self):
-		super(turn_rightSM, self).__init__()
-		self.name = 'turn_right'
+		super(go_backSM, self).__init__()
+		self.name = 'go_back'
 
 		# parameters of this behavior
 
@@ -45,11 +44,9 @@ class turn_rightSM(Behavior):
 
 
 	def create(self):
-		# x:683 y:190, x:133 y:290
+		# x:483 y:240, x:483 y:90
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
-		_state_machine.userdata.Direction = 'Right'
-		_state_machine.userdata.Turn_Metric = {'x':1.5,'y':1.5}
-		_state_machine.userdata.Straight_Metric = 2.0
+		_state_machine.userdata.waypoint_back = {'coordinate':{'x':'none', 'y':'none', 'theta':'none'}, 'increment':{'x':-1.5, 'y':0.0, 'theta':0.0}}
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -58,31 +55,19 @@ class turn_rightSM(Behavior):
 
 
 		with _state_machine:
-			# x:107 y:117
-			OperatableStateMachine.add('w1',
-										WaitState(wait_time=1),
-										transitions={'done': 's1'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:351 y:109
+			# x:201 y:59
 			OperatableStateMachine.add('s1',
 										SubscriberState(topic='/pose', blocking=True, clear=False),
 										transitions={'received': 'm1', 'unavailable': 'failed'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
 										remapping={'message': 'curr_pose'})
 
-			# x:337 y:412
-			OperatableStateMachine.add('w2',
-										WaitState(wait_time=15),
-										transitions={'done': 'finished'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:331 y:274
+			# x:181 y:209
 			OperatableStateMachine.add('m1',
 										MoveBaseState(),
-										transitions={'arrived': 'w2', 'failed': 'failed'},
+										transitions={'arrived': 'finished', 'failed': 'failed'},
 										autonomy={'arrived': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'Direction': 'Direction', 'curr_pose': 'curr_pose', 'Turn_Metric': 'Turn_Metric', 'Straight_Metric': 'Straight_Metric'})
+										remapping={'waypoint': 'waypoint_back', 'curr_pose': 'curr_pose'})
 
 
 		return _state_machine

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="ENTER_BATTERY">
+
+	<executable package_path="flexbe_navigation_states.enter_battery_sm" class="ENTER_BATTERYSM" />
+	<tagstring>enter battery</tagstring>
+	<author>TG4</author>
+	<date>Wed Jul 29 2020</date>
+	<description>
+		enter battery
+	</description>
+
+
+	<!-- Contained Behaviors -->
+	<contains name="battery_check" />
+	<contains name="go_straight" />
+	<contains name="go_back" />
+
+	<!-- Available Parameters -->
+
+</behavior>

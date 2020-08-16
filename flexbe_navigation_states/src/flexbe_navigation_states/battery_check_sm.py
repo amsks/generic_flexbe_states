@@ -76,7 +76,7 @@ class battery_checkSM(Behavior):
 
 			# x:105 y:224
 			OperatableStateMachine.add('d1',
-										DecisionState(outcomes=['Low','Medium','High'], conditions=lambda x: 'Low' if x.data<96 else 'Medium'),
+										DecisionState(outcomes=['Low','Medium','High'], conditions=lambda x: 'Low' if x.data<98 else 'Medium'),
 										transitions={'Low': 'L_B', 'Medium': 'M_B', 'High': 'H_B'},
 										autonomy={'Low': Autonomy.Off, 'Medium': Autonomy.Off, 'High': Autonomy.Off},
 										remapping={'input_value': 'battery_level'})

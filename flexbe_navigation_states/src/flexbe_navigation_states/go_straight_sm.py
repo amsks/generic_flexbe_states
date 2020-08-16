@@ -47,7 +47,9 @@ class go_straightSM(Behavior):
 	def create(self):
 		# x:133 y:340, x:333 y:340
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
-		_state_machine.userdata.waypoint_straight = {'coordinate':{'x':'none', 'y':'none', 'theta':'none'}, 'increment':{'x':1.0, 'y':0.0, 'theta':0.0}}
+		_state_machine.userdata.Direction = 'Straight'
+		_state_machine.userdata.Turn_Metric = {'x':3,'y':2.5}
+		_state_machine.userdata.Straight_Metric = 2.5
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -74,7 +76,7 @@ class go_straightSM(Behavior):
 										MoveBaseState(),
 										transitions={'arrived': 'finished', 'failed': 'failed'},
 										autonomy={'arrived': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'waypoint': 'waypoint_straight', 'curr_pose': 'curr_pose'})
+										remapping={'Direction': 'Direction', 'curr_pose': 'curr_pose', 'Turn_Metric': 'Turn_Metric', 'Straight_Metric': 'Straight_Metric'})
 
 
 		return _state_machine

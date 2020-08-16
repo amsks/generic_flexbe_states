@@ -47,7 +47,9 @@ class turn_leftSM(Behavior):
 	def create(self):
 		# x:583 y:140, x:133 y:290
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
-		_state_machine.userdata.waypoint_left = {'coordinate':{'x':'none', 'y':'none', 'theta':'none'}, 'increment':{'x':2.0, 'y':2.0, 'theta':3.1415/2}}
+		_state_machine.userdata.Direction = 'Left'
+		_state_machine.userdata.Turn_Metric = {'x':2.5,'y':2.5}
+		_state_machine.userdata.Straight_Metric = 2.5
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -80,7 +82,7 @@ class turn_leftSM(Behavior):
 										MoveBaseState(),
 										transitions={'arrived': 'w2', 'failed': 'failed'},
 										autonomy={'arrived': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'waypoint': 'waypoint_left', 'curr_pose': 'curr_pose'})
+										remapping={'Direction': 'Direction', 'curr_pose': 'curr_pose', 'Turn_Metric': 'Turn_Metric', 'Straight_Metric': 'Straight_Metric'})
 
 
 		return _state_machine

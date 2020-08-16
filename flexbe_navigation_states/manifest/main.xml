@@ -12,8 +12,9 @@
 
 
 	<!-- Contained Behaviors -->
-	<contains name="go_to_destination" />
+	<contains name="Try_Obj" />
 	<contains name="battery_check" />
+	<contains name="go_to_battery_charging_station_2" />
 
 	<!-- Available Parameters -->
 

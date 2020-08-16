@@ -22,19 +22,45 @@ class Carbonara(EventState):
 	def __init__(self):
 		"""	Constructor
 		"""
-		super(Carbonara, self).__init__(outcomes=['done'], input_keys=['input_value'], output_keys=['closest_object'])
+		super(Carbonara, self).__init__(outcomes=['none', 'Obstacle', 'Left', 'Right' ], input_keys=['input_value'], output_keys=['output_value'])
 		
 		self.ordered_list = []
+
+		self.decision_threshold = 4.5
+		self.obstacle_threshold = 3.5
 
 
 
 	def execute(self, userdata):
 
-		if(self.ordered_list[0].z<3.5):
-			userdata.closest_object = str(self.ordered_list[0].Class)
-			# nothing to check
-			return 'done'
 
+		if(self.ordered_list[0].Class == 'Object'):
+			userdata.output_value = [self.ordered_list[0].Class, self.ordered_list[0].z]
+			Logger.logwarn('ELEMENT obstacle: %s' % str(userdata.output_value))
+			
+			if(self.ordere_list[0].z > self.obstacle_threshold):
+				return 'none'
+			else:
+				return 'Obstacle'
+
+		elif(self.ordered_list[0].Class == 'Left_Sign'):
+			if(self.ordered_list[0].z < self.decision_threshold):
+				userdata.output_value = self.ordered_list[0].Class
+				return 'Left'
+			else:
+				return 'none'
+
+		elif(self.ordered_list[0].Class == 'Left_Sign'): 
+			if(self.ordered_list[0].z < self.decision_threshold):
+				userdata.output_value = self.ordered_list[0].Class
+				return 'Right'
+			else:
+				return 'none'
+		else:
+			return 'none'
+		# else:
+		# 	userdata.output_value = self.ordered_list[0].Class
+		# 	return 'continue'
 	
 
 
@@ -46,7 +72,7 @@ class Carbonara(EventState):
 		#	Logger.logwarn('ELEMENT: %s' % str(item.z))
 		Logger.logwarn('ELEMENT: %s' % str(self.ordered_list[0].Class))
 		Logger.logwarn('at distance: %s' % str(self.ordered_list[0].z))
-		#userdata.closest_object = ordered_list[0]
+		#userdata.output_value = ordered_list[0]
 
 
 
