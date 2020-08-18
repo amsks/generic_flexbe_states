@@ -9,8 +9,7 @@
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from flexbe_states.subscriber_state import SubscriberState
-from flexbe_states.wait_state import WaitState
-from flexbe_navigation_states.move_base_state import MoveBaseState
+from flexbe_utility_states.MARCO import Carbonara
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -18,18 +17,18 @@ from flexbe_navigation_states.move_base_state import MoveBaseState
 
 
 '''
-Created on Wed Jul 29 2020
-@author: TG4
+Created on Mon Aug 17 2020
+@author: Aditya
 '''
-class StopSM(Behavior):
+class Main_NewSM(Behavior):
 	'''
-	stop
+	New integration test
 	'''
 
 
 	def __init__(self):
-		super(StopSM, self).__init__()
-		self.name = 'Stop'
+		super(Main_NewSM, self).__init__()
+		self.name = 'Main_New'
 
 		# parameters of this behavior
 
@@ -45,9 +44,9 @@ class StopSM(Behavior):
 
 
 	def create(self):
-		# x:83 y:390, x:33 y:190
+		# x:1569 y:533, x:771 y:388
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
-		_state_machine.userdata.Direction = 'Stop'
+		_state_machine.userdata.input_value = 1
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -56,25 +55,19 @@ class StopSM(Behavior):
 
 
 		with _state_machine:
-			# x:201 y:59
-			OperatableStateMachine.add('s1',
-										SubscriberState(topic='/pose', blocking=True, clear=False),
-										transitions={'received': 'm1', 'unavailable': 'failed'},
+			# x:106 y:98
+			OperatableStateMachine.add('detect_object',
+										SubscriberState(topic='/darknet_ros/bounding_boxes', blocking=True, clear=False),
+										transitions={'received': 'Determine_Course', 'unavailable': 'failed'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
-										remapping={'message': 'curr_pose'})
+										remapping={'message': 'detected'})
 
-			# x:207 y:374
-			OperatableStateMachine.add('w1',
-										WaitState(wait_time=4),
-										transitions={'done': 'finished'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:181 y:224
-			OperatableStateMachine.add('m1',
-										MoveBaseState(),
-										transitions={'arrived': 'w1', 'failed': 'failed'},
-										autonomy={'arrived': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'Direction': 'Direction', 'curr_pose': 'curr_pose'})
+			# x:101 y:301
+			OperatableStateMachine.add('Determine_Course',
+										Carbonara(),
+										transitions={'none': 'failed', 'Obstacle': 'failed', 'Left': 'failed', 'Right': 'failed'},
+										autonomy={'none': Autonomy.Off, 'Obstacle': Autonomy.Off, 'Left': Autonomy.Off, 'Right': Autonomy.Off},
+										remapping={'input_value': 'detected', 'Distance': 'Distance'})
 
 
 		return _state_machine

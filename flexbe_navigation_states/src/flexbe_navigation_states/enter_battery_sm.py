@@ -10,8 +10,8 @@
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from flexbe_states.wait_state import WaitState
 from flexbe_navigation_states.battery_check_sm import battery_checkSM
-from flexbe_navigation_states.go_straight_sm import go_straightSM
-from flexbe_navigation_states.go_back_sm import go_backSM
+from flexbe_navigation_states.battery_in_sm import battery_inSM
+from flexbe_navigation_states.battery_out_sm import battery_outSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -36,9 +36,9 @@ class ENTER_BATTERYSM(Behavior):
 
 		# references to used behaviors
 		self.add_behavior(battery_checkSM, 'battery_check')
-		self.add_behavior(go_straightSM, 'go_straight')
 		self.add_behavior(battery_checkSM, 'battery_check_2')
-		self.add_behavior(go_backSM, 'go_back')
+		self.add_behavior(battery_inSM, 'battery_in')
+		self.add_behavior(battery_outSM, 'battery_out')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -60,7 +60,7 @@ class ENTER_BATTERYSM(Behavior):
 
 
 		with _state_machine:
-			# x:157 y:24
+			# x:71 y:34
 			OperatableStateMachine.add('w1',
 										WaitState(wait_time=1),
 										transitions={'done': 'battery_check'},
@@ -69,36 +69,30 @@ class ENTER_BATTERYSM(Behavior):
 			# x:169 y:121
 			OperatableStateMachine.add('battery_check',
 										self.use_behavior(battery_checkSM, 'battery_check'),
-										transitions={'L_B': 'go_straight', 'M_B': 'w2', 'H_B': 'w2', 'failed': 'failed'},
+										transitions={'L_B': 'battery_in', 'M_B': 'w1', 'H_B': 'w1', 'failed': 'failed'},
 										autonomy={'L_B': Autonomy.Inherit, 'M_B': Autonomy.Inherit, 'H_B': Autonomy.Inherit, 'failed': Autonomy.Inherit})
-
-			# x:407 y:24
-			OperatableStateMachine.add('w2',
-										WaitState(wait_time=2),
-										transitions={'done': 'w1'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:519 y:171
-			OperatableStateMachine.add('go_straight',
-										self.use_behavior(go_straightSM, 'go_straight'),
-										transitions={'finished': 'battery_check_2', 'failed': 'failed'},
-										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 			# x:519 y:271
 			OperatableStateMachine.add('battery_check_2',
 										self.use_behavior(battery_checkSM, 'battery_check_2'),
-										transitions={'L_B': 'w3', 'M_B': 'go_back', 'H_B': 'go_back', 'failed': 'failed'},
+										transitions={'L_B': 'w3', 'M_B': 'battery_out', 'H_B': 'battery_out', 'failed': 'failed'},
 										autonomy={'L_B': Autonomy.Inherit, 'M_B': Autonomy.Inherit, 'H_B': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 			# x:557 y:424
 			OperatableStateMachine.add('w3',
-										WaitState(wait_time=2),
+										WaitState(wait_time=1),
 										transitions={'done': 'battery_check_2'},
 										autonomy={'done': Autonomy.Off})
 
-			# x:269 y:371
-			OperatableStateMachine.add('go_back',
-										self.use_behavior(go_backSM, 'go_back'),
+			# x:518 y:138
+			OperatableStateMachine.add('battery_in',
+										self.use_behavior(battery_inSM, 'battery_in'),
+										transitions={'finished': 'battery_check_2', 'failed': 'failed'},
+										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
+
+			# x:251 y:402
+			OperatableStateMachine.add('battery_out',
+										self.use_behavior(battery_outSM, 'battery_out'),
 										transitions={'finished': 'finished', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 

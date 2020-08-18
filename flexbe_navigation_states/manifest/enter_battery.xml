@@ -13,8 +13,8 @@
 
 	<!-- Contained Behaviors -->
 	<contains name="battery_check" />
-	<contains name="go_straight" />
-	<contains name="go_back" />
+	<contains name="battery_in" />
+	<contains name="battery_out" />
 
 	<!-- Available Parameters -->
 

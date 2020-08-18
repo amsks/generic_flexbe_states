@@ -9,7 +9,6 @@
 
 from flexbe_core import Behavior, Autonomy, OperatableStateMachine, ConcurrencyContainer, PriorityContainer, Logger
 from flexbe_states.subscriber_state import SubscriberState
-from flexbe_states.wait_state import WaitState
 from flexbe_navigation_states.move_base_state import MoveBaseState
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
@@ -18,18 +17,18 @@ from flexbe_navigation_states.move_base_state import MoveBaseState
 
 
 '''
-Created on Wed Jul 29 2020
-@author: TG4
+Created on Tue Aug 18 2020
+@author: Adtya
 '''
-class StopSM(Behavior):
+class ParkingSM(Behavior):
 	'''
-	stop
+	Mamamma
 	'''
 
 
 	def __init__(self):
-		super(StopSM, self).__init__()
-		self.name = 'Stop'
+		super(ParkingSM, self).__init__()
+		self.name = 'Parking'
 
 		# parameters of this behavior
 
@@ -45,9 +44,9 @@ class StopSM(Behavior):
 
 
 	def create(self):
-		# x:83 y:390, x:33 y:190
+		# x:950 y:235, x:439 y:405
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
-		_state_machine.userdata.Direction = 'Stop'
+		_state_machine.userdata.Direction = 'Parking'
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -56,23 +55,17 @@ class StopSM(Behavior):
 
 
 		with _state_machine:
-			# x:201 y:59
-			OperatableStateMachine.add('s1',
+			# x:147 y:71
+			OperatableStateMachine.add('Get_Pose',
 										SubscriberState(topic='/pose', blocking=True, clear=False),
-										transitions={'received': 'm1', 'unavailable': 'failed'},
+										transitions={'received': 'Park', 'unavailable': 'failed'},
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
 										remapping={'message': 'curr_pose'})
 
-			# x:207 y:374
-			OperatableStateMachine.add('w1',
-										WaitState(wait_time=4),
-										transitions={'done': 'finished'},
-										autonomy={'done': Autonomy.Off})
-
-			# x:181 y:224
-			OperatableStateMachine.add('m1',
+			# x:441 y:157
+			OperatableStateMachine.add('Park',
 										MoveBaseState(),
-										transitions={'arrived': 'w1', 'failed': 'failed'},
+										transitions={'arrived': 'finished', 'failed': 'failed'},
 										autonomy={'arrived': Autonomy.Off, 'failed': Autonomy.Off},
 										remapping={'Direction': 'Direction', 'curr_pose': 'curr_pose'})
 

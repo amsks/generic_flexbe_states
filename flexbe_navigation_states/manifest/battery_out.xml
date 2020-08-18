@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="battery_out">
+
+	<executable package_path="flexbe_navigation_states.battery_out_sm" class="battery_outSM" />
+	<tagstring></tagstring>
+	<author>Aditya</author>
+	<date>Tue Aug 18 2020</date>
+	<description>
+		mamam
+	</description>
+
+
+	<!-- Contained Behaviors -->
+
+	<!-- Available Parameters -->
+
+</behavior>

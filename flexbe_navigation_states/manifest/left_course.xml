@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<behavior name="MAIN">
+<behavior name="Left_Course">
 
-	<executable package_path="flexbe_navigation_states.main_sm" class="MAINSM" />
+	<executable package_path="flexbe_navigation_states.left_course_sm" class="Left_CourseSM" />
 	<tagstring></tagstring>
 	<author>Aditya</author>
 	<date>Mon Aug 17 2020</date>
 	<description>
-		New integration test
+		Hahahhaah
 	</description>
 
 
 	<!-- Contained Behaviors -->
-	<contains name="Navigation" />
-	<contains name="Parking" />
 
 	<!-- Available Parameters -->
 

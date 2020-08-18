@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<behavior name="battery">
+<behavior name="BATTERY">
 
-	<executable package_path="flexbe_navigation_states.battery_sm" class="batterySM" />
-	<tagstring>battery</tagstring>
+	<executable package_path="flexbe_navigation_states.battery_sm" class="BATTERYSM" />
+	<tagstring>enter battery</tagstring>
 	<author>TG4</author>
-	<date>Sat Jul 18 2020</date>
+	<date>Wed Jul 29 2020</date>
 	<description>
-		battery
+		enter battery
 	</description>
 
 
 	<!-- Contained Behaviors -->
+	<contains name="battery_check" />
+	<contains name="battery_in" />
+	<contains name="battery_out" />
 
 	<!-- Available Parameters -->
 

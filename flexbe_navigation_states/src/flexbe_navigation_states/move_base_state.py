@@ -22,7 +22,7 @@ class MoveBaseState(EventState):
     def __init__(self):
         """Constructor"""
 
-        super(MoveBaseState, self).__init__(outcomes = ['arrived', 'failed'], input_keys = ['Direction', 'curr_pose', 'Turn_Metric', 'Straight_Metric'])
+        super(MoveBaseState, self).__init__(outcomes = ['arrived', 'failed'], input_keys = ['Direction', 'curr_pose'])
 
         self._action_topic = "/move_base"
 
@@ -35,18 +35,20 @@ class MoveBaseState(EventState):
         self.origin = [-12.0,-8.0]
         self.quadrant = 1
         self.turn_metric = [3.25,2.5]
-        self.straight_metric = 4.0
+        self.straight_metric = 2.0 
+        self.back_metric = 1.0
 
         # Locations of the Goal and the Charging Stations
         self.charging_station_1=[-8.32, 4.97]
         self.charging_station_2=[6.79, 1.03]
-        self.parking_sign=[16.21, 11.05]
+        self.parking_sign=[11.0, -3.0]
+        self.parking_point = [13.125, -9.36]
  
 
-    def init_metrics(self,userdata):
-        self.turn_metric[0] = userdata.Turn_Metric['x']
-        self.turn_metric[1] = userdata.Turn_Metric['y']
-        self.straight_metric = userdata.Straight_Metric
+    # def init_metrics(self,userdata):
+    #     self.turn_metric[0] = userdata.Turn_Metric['x']
+    #     self.turn_metric[1] = userdata.Turn_Metric['y']
+    #     self.straight_metric = userdata.Straight_Metric
 
     def execute(self, userdata):
         """Wait for action result and return outcome accordingly"""
@@ -141,7 +143,7 @@ class MoveBaseState(EventState):
             new_theta = curr_theta[2] - math.pi/2
 
         elif(self.quadrant == 2):
-            new_x = curr_x + turn_metric[0]- self.origin[0]
+            new_x = curr_x + turn_metric[0] - self.origin[0]
             new_y = curr_y + turn_metric[1] - self.origin[1]
             new_theta = curr_theta[2] - math.pi/2
 
@@ -151,7 +153,7 @@ class MoveBaseState(EventState):
             new_theta = curr_theta[2] - math.pi/2
 
         elif(self.quadrant == 4):
-            new_x = curr_x - turn_metric[0] + self.origin[0] 
+            new_x = curr_x - turn_metric[0] - self.origin[0] 
             new_y = curr_y - turn_metric[1] - self.origin[1]
             new_theta = curr_theta[2] - math.pi/2
 
@@ -165,6 +167,77 @@ class MoveBaseState(EventState):
         # Return the the point that needs to be set for goal
         return (Point(x = new_x, y = new_y), transformations.quaternion_from_euler(0, 0, new_theta) )
 
+
+    def stop_point(self,userdata):
+
+        # Extract the current pose
+        curr_x = userdata.curr_pose.pose.position.x
+        curr_y = userdata.curr_pose.pose.position.y
+        curr_theta = transformations.euler_from_quaternion([0, 0, userdata.curr_pose.pose.orientation.z, userdata.curr_pose.pose.orientation.w])
+
+        new_x = curr_x - self.origin[0] 
+        new_y = curr_y - self.origin[1]
+        new_theta = curr_theta[2]
+
+        # Log the changes
+        Logger.logwarn("NEW_X: %s" % str(new_x))
+        Logger.logwarn("NEW_Y: %s" % str(new_y))
+        Logger.logwarn("NEW_theta: %s" % str(new_theta))
+        
+        Logger.logwarn("Quadrant: %s" % str(self.quadrant))
+
+        # Return the the point that needs to be set for goal
+        return (Point(x = new_x, y = new_y), transformations.quaternion_from_euler(0, 0, new_theta) )
+
+    def get_parking_point(self, userdata):
+        # self.update_quadrant(userdata)
+
+        curr_x = userdata.curr_pose.pose.position.x
+        curr_y = userdata.curr_pose.pose.position.y
+        curr_theta = transformations.euler_from_quaternion([0, 0, userdata.curr_pose.pose.orientation.z, userdata.curr_pose.pose.orientation.w])
+
+        new_x = 7.00 
+        new_y = 0.85
+        new_theta = 1.4*math.pi/2
+
+        return (Point(x = new_x, y = new_y), transformations.quaternion_from_euler(0, 0, new_theta) )
+
+    def get_point_back(self, userdata):
+        self.update_quadrant(userdata)
+
+        curr_x = userdata.curr_pose.pose.position.x
+        curr_y = userdata.curr_pose.pose.position.y
+        curr_theta = transformations.euler_from_quaternion([0, 0, userdata.curr_pose.pose.orientation.z, userdata.curr_pose.pose.orientation.w])
+
+        if(self.quadrant == 1):
+            new_x = curr_x - self.back_metric - self.origin[0]
+            new_y = curr_y - self.origin[1]
+            new_theta = curr_theta[2]
+
+        elif(self.quadrant == 2):
+            new_x = curr_x - self.origin[0]
+            new_y = curr_y - self.back_metric - self.origin[1]
+            new_theta = curr_theta[2]
+
+        elif(self.quadrant == 3):
+            new_x = curr_x + self.back_metric - self.origin[0]
+            new_y = curr_y - self.origin[1]
+            new_theta = curr_theta[2]
+
+        elif(self.quadrant == 4):
+            new_x = curr_x - self.origin[0] 
+            new_y = curr_y + self.back_metric - self.origin[1]
+            new_theta = curr_theta[2]
+
+        # Log the changes
+        Logger.logwarn("NEW_X: %s" % str(new_x))
+        Logger.logwarn("NEW_Y: %s" % str(new_y))
+        Logger.logwarn("NEW_theta: %s" % str(new_theta))
+        
+        Logger.logwarn("Quadrant: %s" % str(self.quadrant))
+
+        # Return the the point that needs to be set for goal
+        return (Point(x = new_x, y = new_y), transformations.quaternion_from_euler(0, 0, new_theta) )
 
     def get_point_straight(self, userdata):
 	
@@ -239,8 +312,29 @@ class MoveBaseState(EventState):
 
         # Return the the point that needs to be set for goal
     	return (Point(x = new_x, y = new_y), transformations.quaternion_from_euler(0, 0, new_theta) )
-		
-	
+
+
+    def battery_point_in(self, userdata):
+        # self.update_quadrant(userdata)
+
+        curr_x = userdata.curr_pose.pose.position.x
+        curr_y = userdata.curr_pose.pose.position.y
+        curr_theta = transformations.euler_from_quaternion([0, 0, userdata.curr_pose.pose.orientation.z, userdata.curr_pose.pose.orientation.w])
+
+        new_x = 2.4
+        new_y = -0.8
+        new_theta = - 1.2*math.pi/2
+
+        return (Point(x = new_x, y = new_y), transformations.quaternion_from_euler(0, 0, new_theta) )
+
+    def battery_point_out(self, userdata):
+
+        new_x = 5 
+        new_y = 0.0
+        new_theta = 0.0
+
+        return (Point(x = new_x, y = new_y), transformations.quaternion_from_euler(0, 0, new_theta) )
+    
     def on_enter(self, userdata):
         """Create and send action goal"""
  
@@ -256,11 +350,25 @@ class MoveBaseState(EventState):
     	if(userdata.Direction == 'Straight'):
             pt, qt = self.get_point_straight(userdata)
 
+        elif(userdata.Direction == 'Back'):
+            pt, qt = self.get_point_back(userdata)
+
         elif(userdata.Direction == 'Left'):
             pt, qt = self.get_point_left(userdata)
 
         elif(userdata.Direction == 'Right'):
             pt, qt = self.get_point_right(userdata)
+
+        elif(userdata.Direction == 'Stop'):
+            pt, qt = self.stop_point(userdata)
+        elif(userdata.Direction == 'Parking'):
+            pt, qt = self.get_parking_point(userdata)
+
+        elif(userdata.Direction == 'Battery_in'):
+            pt, qt = self.battery_point_in(userdata)
+
+        elif(userdata.Direction == 'Battery_out'):
+            pt, qt = self.battery_point_out(userdata)
 
         else:
             Logger.logwarn("Direction not Detemined")

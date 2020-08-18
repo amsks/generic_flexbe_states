@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<behavior name="Navigation">
+
+	<executable package_path="flexbe_navigation_states.navigation_sm" class="NavigationSM" />
+	<tagstring>turn decision</tagstring>
+	<author>TG4</author>
+	<date>Sat Jul 18 2020</date>
+	<description>
+		Integrated behaviour
+	</description>
+
+
+	<!-- Contained Behaviors -->
+	<contains name="turn_right" />
+	<contains name="turn_left" />
+	<contains name="go_straight" />
+	<contains name="Stop" />
+
+	<!-- Available Parameters -->
+
+</behavior>
