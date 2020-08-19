@@ -7,7 +7,7 @@ from flexbe_core.proxy import ProxyPublisher
 from geometry_msgs.msg import PoseStamped
 
 
-class Carbonara(EventState):
+class Avoidance_Check(EventState):
 	"""
 		Delicious! 
 
@@ -22,12 +22,12 @@ class Carbonara(EventState):
 	def __init__(self):
 		"""	Constructor
 		"""
-		super(Carbonara, self).__init__(outcomes=['none', 'Obstacle', 'Left', 'Right' ], input_keys=['input_value'], output_keys=['Distance'])
+		super(Avoidance_Check, self).__init__(outcomes=['Stop', 'Back', 'Done'], input_keys=['input_value'], output_keys=['Distance'])
 		
 		self.ordered_list = []
 
-		self.turn_decision_threshold = 4.5
 		self.obstacle_threshold = 3.5
+		self.stop_threshold = 1.0
 
 
 
@@ -39,25 +39,14 @@ class Carbonara(EventState):
 			# Logger.logwarn('ELEMENT obstacle: %s' % str(userdata.Distance))
 			
 			if(self.ordered_list[0].z > self.obstacle_threshold):
-				return 'none'
+				return 'Done'
+			elif(self.ordered_list[0].z < self.stop_threshold):
+				return 'Back'
 			else:
-				return 'Obstacle'
+				return 'Stop'
 
-		elif(self.ordered_list[0].Class == 'Left_Sign'):
-			if(self.ordered_list[0].z < self.turn_decision_threshold):
-				userdata.Distance = self.ordered_list[0].Class
-				return 'Left'
-			else:
-				return 'none'
-
-		elif(self.ordered_list[0].Class == 'Left_Sign'): 
-			if(self.ordered_list[0].z < self.turn_decision_threshold):
-				userdata.Distance = self.ordered_list[0].Class
-				return 'Right'
-			else:
-				return 'none'
 		else:
-			return 'none'
+			return 'Done'
 		# else:
 		# 	userdata.output_value = self.ordered_list[0].Class
 		# 	return 'continue'

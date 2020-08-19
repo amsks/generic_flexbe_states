@@ -19,12 +19,12 @@ from flexbe_navigation_states.battery_out_sm import battery_outSM
 
 
 '''
-Created on Wed Jul 29 2020
-@author: TG4
+Created on Wed Aug 19 2020
+@author: Aditya
 '''
 class ENTER_BATTERYSM(Behavior):
 	'''
-	enter battery
+	Charge the battery at a charging spot
 	'''
 
 
@@ -50,7 +50,7 @@ class ENTER_BATTERYSM(Behavior):
 
 
 	def create(self):
-		# x:30 y:365, x:83 y:290
+		# x:30 y:365, x:283 y:285
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
 
 		# Additional creation code can be added inside the following tags
@@ -69,7 +69,7 @@ class ENTER_BATTERYSM(Behavior):
 			# x:169 y:121
 			OperatableStateMachine.add('battery_check',
 										self.use_behavior(battery_checkSM, 'battery_check'),
-										transitions={'L_B': 'battery_in', 'M_B': 'w1', 'H_B': 'w1', 'failed': 'failed'},
+										transitions={'L_B': 'battery_in', 'M_B': 'finished', 'H_B': 'finished', 'failed': 'failed'},
 										autonomy={'L_B': Autonomy.Inherit, 'M_B': Autonomy.Inherit, 'H_B': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 			# x:519 y:271

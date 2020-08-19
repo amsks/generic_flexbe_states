@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<behavior name="Battery_Check">
+<behavior name="battery_check">
 
-	<executable package_path="flexbe_navigation_states.battery_check_sm" class="Battery_CheckSM" />
-	<tagstring>enter battery</tagstring>
-	<author>TG4</author>
-	<date>Wed Jul 29 2020</date>
+	<executable package_path="flexbe_navigation_states.battery_check_sm" class="battery_checkSM" />
+	<tagstring>battery</tagstring>
+	<author>Aditya</author>
+	<date>Wed Aug 19 2020</date>
 	<description>
-		enter battery
+		check the value of battery
 	</description>
 
 
 	<!-- Contained Behaviors -->
-	<contains name="battery_check" />
-	<contains name="battery_in" />
-	<contains name="battery_out" />
 
 	<!-- Available Parameters -->
 

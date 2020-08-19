@@ -15,7 +15,7 @@
 	<contains name="turn_right" />
 	<contains name="turn_left" />
 	<contains name="go_straight" />
-	<contains name="Stop" />
+	<contains name="Obstacle_Avoidance" />
 
 	<!-- Available Parameters -->
 

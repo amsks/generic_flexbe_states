@@ -12,8 +12,8 @@
 
 
 	<!-- Contained Behaviors -->
-	<contains name="go_straight" />
 	<contains name="Stop" />
+	<contains name="go_back" />
 
 	<!-- Available Parameters -->
 

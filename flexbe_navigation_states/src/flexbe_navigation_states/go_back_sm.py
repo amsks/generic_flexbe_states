@@ -46,7 +46,7 @@ class go_backSM(Behavior):
 	def create(self):
 		# x:483 y:240, x:483 y:90
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
-		_state_machine.userdata.waypoint_back = {'coordinate':{'x':'none', 'y':'none', 'theta':'none'}, 'increment':{'x':-1.5, 'y':0.0, 'theta':0.0}}
+		_state_machine.userdata.Direction = 'Back'
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -67,7 +67,7 @@ class go_backSM(Behavior):
 										MoveBaseState(),
 										transitions={'arrived': 'finished', 'failed': 'failed'},
 										autonomy={'arrived': Autonomy.Off, 'failed': Autonomy.Off},
-										remapping={'waypoint': 'waypoint_back', 'curr_pose': 'curr_pose'})
+										remapping={'Direction': 'Direction', 'curr_pose': 'curr_pose'})
 
 
 		return _state_machine

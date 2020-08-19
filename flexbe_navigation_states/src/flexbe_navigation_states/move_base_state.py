@@ -32,7 +32,8 @@ class MoveBaseState(EventState):
         self._failed = False
 
         # Direction and Correction Parameters
-        self.origin = [-12.0,-8.0]
+        # self.origin = [-12.0,-8.0]
+        self.origin = [4.15, 17.4]
         self.quadrant = 1
         self.turn_metric = [3.25,2.5]
         self.straight_metric = 2.0 
@@ -322,7 +323,7 @@ class MoveBaseState(EventState):
         curr_theta = transformations.euler_from_quaternion([0, 0, userdata.curr_pose.pose.orientation.z, userdata.curr_pose.pose.orientation.w])
 
         new_x = 2.4
-        new_y = -0.8
+        new_y = -0.8        
         new_theta = - 1.2*math.pi/2
 
         return (Point(x = new_x, y = new_y), transformations.quaternion_from_euler(0, 0, new_theta) )

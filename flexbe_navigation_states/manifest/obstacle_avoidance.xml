@@ -3,15 +3,17 @@
 <behavior name="Obstacle_Avoidance">
 
 	<executable package_path="flexbe_navigation_states.obstacle_avoidance_sm" class="Obstacle_AvoidanceSM" />
-	<tagstring>obstacle avoidance</tagstring>
+	<tagstring>object recognition reaction</tagstring>
 	<author>TG4</author>
 	<date>Wed Jul 29 2020</date>
 	<description>
-		obstacle avoidance
+		object recognition reaction
 	</description>
 
 
 	<!-- Contained Behaviors -->
+	<contains name="Stop" />
+	<contains name="go_back" />
 
 	<!-- Available Parameters -->
 

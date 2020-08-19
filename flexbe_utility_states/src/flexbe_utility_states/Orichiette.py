@@ -8,7 +8,7 @@ from geometry_msgs.msg import PoseStamped
 
 import math
 
-class Battery_Check(EventState):
+class Battery_value(EventState):
 	"""
 		Delicious! 
 
@@ -17,7 +17,7 @@ class Battery_Check(EventState):
 	def __init__(self):
 		"""	Constructor
 		"""
-		super(Battery_Check, self).__init__(outcomes=['L_B', 'M_B', 'H_B'], input_keys=['battery_level'], output_keys=['Direction'])
+		super(Battery_value, self).__init__(outcomes=['L_B', 'M_B', 'H_B'], input_keys=['battery_level'], output_keys=['Direction'])
 		
 		self.low_threshold = 40.0
 

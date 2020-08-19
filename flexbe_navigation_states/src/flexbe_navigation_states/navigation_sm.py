@@ -14,7 +14,7 @@ from flexbe_states.subscriber_state import SubscriberState
 from flexbe_utility_states.MARCO import Carbonara
 from flexbe_navigation_states.turn_left_sm import turn_leftSM
 from flexbe_navigation_states.go_straight_sm import go_straightSM
-from flexbe_navigation_states.stop_sm import StopSM
+from flexbe_navigation_states.obstacle_avoidance_sm import Obstacle_AvoidanceSM
 # Additional imports can be added inside the following tags
 # [MANUAL_IMPORT]
 
@@ -43,7 +43,7 @@ class NavigationSM(Behavior):
 		self.add_behavior(go_straightSM, 'go_straight')
 		self.add_behavior(go_straightSM, 'go_straight_2')
 		self.add_behavior(go_straightSM, 'go_straight_3')
-		self.add_behavior(StopSM, 'Stop')
+		self.add_behavior(Obstacle_AvoidanceSM, 'Obstacle_Avoidance')
 
 		# Additional initialization code can be added inside the following tags
 		# [MANUAL_INIT]
@@ -57,9 +57,6 @@ class NavigationSM(Behavior):
 	def create(self):
 		# x:1683 y:419, x:605 y:337
 		_state_machine = OperatableStateMachine(outcomes=['finished', 'failed'])
-		_state_machine.userdata.waypoint_left = {'coordinate':{'x':'none', 'y':'none', 'theta':'none'}, 'increment':{'x':2.0, 'y':2.0, 'theta':3.1415/2}}
-		_state_machine.userdata.waypoint_right = {'coordinate':{'x':'none', 'y':'none', 'theta':'none'}, 'increment':{'x':2.0, 'y':-2.0, 'theta':-3.1415/2}}
-		_state_machine.userdata.waypoint_straight = {'coordinate':{'x':'none', 'y':'none', 'theta':'none'}, 'increment':{'x':2.0, 'y':0.0, 'theta':0.0}}
 
 		# Additional creation code can be added inside the following tags
 		# [MANUAL_CREATE]
@@ -87,10 +84,10 @@ class NavigationSM(Behavior):
 										autonomy={'received': Autonomy.Off, 'unavailable': Autonomy.Off},
 										remapping={'message': 'detected'})
 
-			# x:46 y:337
+			# x:286 y:212
 			OperatableStateMachine.add('carb1',
 										Carbonara(),
-										transitions={'none': 'go_straight', 'Obstacle': 'Stop', 'Left': 'go_straight_2', 'Right': 'go_straight_3'},
+										transitions={'none': 'go_straight', 'Obstacle': 'Obstacle_Avoidance', 'Left': 'go_straight_2', 'Right': 'go_straight_3'},
 										autonomy={'none': Autonomy.Off, 'Obstacle': Autonomy.Off, 'Left': Autonomy.Off, 'Right': Autonomy.Off},
 										remapping={'input_value': 'detected', 'Distance': 'Distance'})
 
@@ -130,10 +127,10 @@ class NavigationSM(Behavior):
 										transitions={'finished': 'turn_right', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
-			# x:321 y:525
-			OperatableStateMachine.add('Stop',
-										self.use_behavior(StopSM, 'Stop'),
-										transitions={'finished': 'carb1', 'failed': 'failed'},
+			# x:381 y:495
+			OperatableStateMachine.add('Obstacle_Avoidance',
+										self.use_behavior(Obstacle_AvoidanceSM, 'Obstacle_Avoidance'),
+										transitions={'finished': 's1', 'failed': 'failed'},
 										autonomy={'finished': Autonomy.Inherit, 'failed': Autonomy.Inherit})
 
 
